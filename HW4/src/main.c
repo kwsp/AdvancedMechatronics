@@ -4,6 +4,7 @@
 
 #include "i2c.h" // I2C interface
 #include "mcp23017.h" // MCP23017 IO expander
+#include "ssd1306.h"  // SSD1306 OLED display 
 
 // DEVCFG0
 #pragma config DEBUG = OFF // disable debugging
@@ -66,9 +67,12 @@ int main() {
     // Setup I2C
     i2c_master_setup();
     mcp_init();
+    ssd1306_setup();
     
     __builtin_enable_interrupts();
     
+    unsigned int counter = 0;
+
     while (1) {
 
         unsigned char b_input = mcp_read_pin_B();
@@ -77,12 +81,14 @@ int main() {
         } else {
             mcp_set_pin_A(7);
         }
-        
-        sleep_ms(200);
-        LATAbits.LATA4 = 1;
-        sleep_ms(200);
-        LATAbits.LATA4 = 0;
 
+        ssd1306_drawPixel(10, 10, 1);
+        ssd1306_drawPixel(11, 10, 1);
+        ssd1306_update();
+        counter++;
+
+        LATAbits.LATA4 = !LATAbits.LATA4; // Flip UserLED
+        sleep_ms(200);
     }
 }
 

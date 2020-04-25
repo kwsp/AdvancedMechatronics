@@ -5,8 +5,8 @@
 #include "ssd1306.h"
 
 unsigned char ssd1306_write = 0b01111000; // i2c address
-unsigned char ssd1306_read = 0b01111001; // i2c address
-unsigned char ssd1306_buffer[512]; // 128x32/8. Every bit is a pixel
+unsigned char ssd1306_read = 0b01111001;  // i2c address
+unsigned char ssd1306_buffer[512];  // 128x32/8. Every bit is a pixel
 
 void ssd1306_setup() {
     // give a little delay for the ssd1306 to power up
