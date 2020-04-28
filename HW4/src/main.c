@@ -1,6 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
 #include <math.h>
+#include <stdio.h>
 
 #include "i2c.h" // I2C interface
 #include "mcp23017.h" // MCP23017 IO expander
@@ -72,23 +73,37 @@ int main() {
     __builtin_enable_interrupts();
     
     unsigned int counter = 0;
-
+    unsigned int clock = 0;
+    char message[50];
+    
     while (1) {
-
-        unsigned char b_input = mcp_read_pin_B();
-        if (b_input & 0x01) {
-            mcp_clear_pin_A(7);
-        } else {
-            mcp_set_pin_A(7);
-        }
-
-        ssd1306_drawPixel(10, 10, 1);
-        ssd1306_drawPixel(11, 10, 1);
+        _CP0_SET_COUNT(0); // Set timer to zero
+        
+//        unsigned char b_input = mcp_read_pin_B();
+//        if (b_input & 0x01) {
+//            mcp_clear_pin_A(7);
+//        } else {
+//            mcp_set_pin_A(7);
+//        }
+        
+        double fps = (double) 24000000 / clock;
+        
+        // Draw message on the SSD1306 OLED
+        ssd1306_clear();
+        sprintf(message, "FPS = %f", fps);
+        ssd1306_drawMessage(10, 10, message);
+        
+        sprintf(message, "Counter = %d", counter);
+        ssd1306_drawMessage(10, 20, message);
+        
         ssd1306_update();
         counter++;
 
-        LATAbits.LATA4 = !LATAbits.LATA4; // Flip UserLED
-        sleep_ms(200);
+        clock = _CP0_GET_COUNT();
+        
+//        // Flip UserLED for heart beat
+//        LATAbits.LATA4 = !LATAbits.LATA4; 
+//        sleep_ms(200);
     }
 }
 
