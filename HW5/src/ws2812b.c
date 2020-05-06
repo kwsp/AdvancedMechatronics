@@ -9,7 +9,7 @@
 
 // setup Timer2 for 48MHz, and setup the output pin
 void ws2812b_setup() {
-    T2CONbits.TCKPS = x; // Timer2 prescaler N=1 (1:1)
+    T2CONbits.TCKPS = 0; // Timer2 prescaler N=1 (1:1)
     PR2 = 65535; // maximum period
     TMR2 = 0; // initialize Timer2 to 0
     T2CONbits.ON = 1; // turn on Timer2
@@ -17,6 +17,8 @@ void ws2812b_setup() {
     // initialize output pin as off
     // TRIS...
     // LAT...
+    TRISBbits.TRISB6 = 0; // B6 output pin for LEDs
+    LATBbits.LATB6 = 0; // Set B6 output to low
 }
 
 // build an array of high/low times from the color input array, then output the high/low bits
@@ -35,7 +37,7 @@ void ws2812b_setColor(wsColor * c, int numLEDs) {
         // loop through each color bit, MSB first
         for (j = 7; j >= 0; j--) {
             // if the bit is a 1
-            if (c->r >> j & 1) {
+            if ((c[i].r >> j) & 1) {
                 // the high is longer
                 delay_times[nB] = delay_times[nB - 1] + HIGHTIME;
                 nB++;
@@ -54,7 +56,7 @@ void ws2812b_setColor(wsColor * c, int numLEDs) {
         // do it again for green
         for (j = 7; j >= 0; j--) {
             // if the bit is a 1
-            if (c->g >> j & 1) {
+            if ((c[i].g >> j) & 1) {
                 // the high is longer
                 delay_times[nB] = delay_times[nB - 1] + HIGHTIME;
                 nB++;
@@ -71,9 +73,9 @@ void ws2812b_setColor(wsColor * c, int numLEDs) {
             }
         }
 		// do it again for blue
-        for (j = 7; j >= 0; j--) {
+         for (j = 7; j >= 0; j--) {
             // if the bit is a 1
-            if (c->b >> j & 1) {
+            if ((c[i].b >> j) & 1) {
                 // the high is longer
                 delay_times[nB] = delay_times[nB - 1] + HIGHTIME;
                 nB++;
@@ -89,7 +91,6 @@ void ws2812b_setColor(wsColor * c, int numLEDs) {
                 nB++;
             }
         }
-
     }
 
     // turn on the pin for the first high/low
