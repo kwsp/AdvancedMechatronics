@@ -6,7 +6,8 @@
 #include "i2c.h" // I2C interface
 #include "mcp23017.h" // MCP23017 IO expander
 #include "ssd1306.h"  // SSD1306 OLED display
-#include "ws2812b.h"  // WS2812 3 Color LED driver
+#include "lsm6ds33.h" // LSM6DS33 IMU
+/*#include "ws2812b.h"  // WS2812 3 Color LED driver*/
 
 // DEVCFG0
 #pragma config DEBUG = OFF // disable debugging
@@ -67,77 +68,54 @@ int main() {
     LATAbits.LATA4 = 0;   // Set A4 to low
 
     // Setup I2C
-    i2c_master_setup();
-    mcp_init();
-    /*ssd1306_setup();*/
+    i2c_master_setup();  // Setup I2C
+    mcp_init();          // Setup MCP23017 IO expander
+    ssd1306_setup();     // Setup ssd1306 OLED display
+    lsm_init();          // Setup lsm6ds33 IMU
 
     /*ws2812b_setup(); // Init 3 color LEDs*/
 
     __builtin_enable_interrupts();
 
-    unsigned int counter = 0;
-    unsigned int clock = 0;
+    int32_t counter = 0;
+    int32_t clock = 0;
     char message[50];
 
-    /*const int N_LEDS = 5;*/
-    /*wsColor ws_color[N_LEDS]; // Color object array for 3 color LED*/
-    /*float _hue[N_LEDS];*/
-    /*float _sat=0.8, _bri=0.4; // Hue, Saturation, brightness*/
-
-//    int i;
-//    _hue[0] = 0;
-//    for (i=1; i<N_LEDS; i++) {
-//        _hue[i] = _hue[i-1] + 50;
-//    }
-
-   /*
-    * TODO:
-    *
-    * 2. Write LSM communication functions
-    *
-    */
+    lsm_data sensor_data;
 
     while (1) {
-//        _CP0_SET_COUNT(0); // Set timer to zero
-//
-        unsigned char b_input = mcp_read_pin_B();
-        if (b_input & 0x01) {
-            mcp_clear_pin_A(7);
-        } else {
-            mcp_set_pin_A(7);
-        }
-//
-//        double fps = (double) 24000000 / clock;
-//
-//        // Draw message on the SSD1306 OLED
-//        ssd1306_clear();
-//        sprintf(message, "FPS = %f", fps);
-//        ssd1306_drawMessage(0, 0, message);
-//
-//        sprintf(message, "Counter = %d", counter);
-//        ssd1306_drawMessage(0, 10, message);
-//
-//        sprintf(message, "R = %3d, G = %3d, B = %3d", ws_color[0].r, ws_color[0].g, ws_color[0].b);
-//        ssd1306_drawMessage(0, 20, message);
-//
-//        ssd1306_update();
-//        counter++;
-//
-//        // Set LED Color
-//        for (i=0; i<N_LEDS; i++) {
-//            _hue[i] += 1;
-//            if (_hue[i] > 255) {
-//                _hue[i] = 0.0;
-//            }
-//            ws_color[i] = HSBtoRGB(_hue[i], _sat, _bri);
-//        }
-//        ws2812b_setColor(ws_color, N_LEDS);
-//
-//        clock = _CP0_GET_COUNT();
-//
+        _CP0_SET_COUNT(0); // Set timer to zero
+
+        /*uint8_t b_input = mcp_read_pin_B();*/
+        /*if (b_input & 0x01) {*/
+            /*mcp_clear_pin_A(7);*/
+        /*} else {*/
+            /*mcp_set_pin_A(7);*/
+        /*}*/
+
+        double fps = (double) 24000000 / clock;
+
+        // Draw message on the SSD1306 OLED
+        ssd1306_clear();
+        sprintf(message, "FPS = %f", fps);
+        ssd1306_drawMessage(0, 0, message);
+
+        lsm_read_sensors(&sensor_data); // Read IMU
+
+        sprintf(message, "T=%d, gx=%d", sensor_data.temp, sensor_data.gyro_x);
+        ssd1306_drawMessage(0, 10, message);
+
+        sprintf(message, "ax=%d, ay=%d, az=%d", sensor_data.acc_x, sensor_data.acc_y, sensor_data.acc_z);
+        ssd1306_drawMessage(0, 20, message);
+
+        ssd1306_update();
+        counter++;
+
+        clock = _CP0_GET_COUNT();
+
         // Flip UserLED for heart beat
-        LATAbits.LATA4 = !LATAbits.LATA4;
-        sleep_ms(200);
+        /*LATAbits.LATA4 = !LATAbits.LATA4;*/
+        /*sleep_ms(200);*/
     }
 }
 
