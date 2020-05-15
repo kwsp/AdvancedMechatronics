@@ -74,7 +74,7 @@ void i2c_master_stop(void) { // send a STOP:
  */
 void i2c_write(unsigned char address_, unsigned char register_, unsigned char data) {
     i2c_master_start();         // Send start bit
-    i2c_master_send(address_ | 0b1);// Send I2C address with write bit
+    i2c_master_send(address_);// Send I2C address with write bit
     i2c_master_send(register_);  // Send register to write to
     i2c_master_send(data);      // Send data to write
     i2c_master_stop();          // Send stop bit
@@ -82,10 +82,10 @@ void i2c_write(unsigned char address_, unsigned char register_, unsigned char da
 
 unsigned char i2c_read(unsigned char address_, unsigned char register_) {
     i2c_master_start();           // Send start bit
-    i2c_master_send(address_ | 1);// Send I2C address with write bit
+    i2c_master_send(address_);// Send I2C address with write bit
     i2c_master_send(register_);   // Send register to read from
     i2c_master_restart();         // Send restart bit
-    i2c_master_send(address_);    // Send I2C address with read bit
+    i2c_master_send(address_ | 0b1);    // Send I2C address with read bit
     unsigned char ret = i2c_master_recv();      
     i2c_master_ack(1);
     i2c_master_stop();

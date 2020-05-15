@@ -5,7 +5,7 @@
 
 #include "i2c.h" // I2C interface
 #include "mcp23017.h" // MCP23017 IO expander
-#include "ssd1306.h"  // SSD1306 OLED display 
+#include "ssd1306.h"  // SSD1306 OLED display
 #include "ws2812b.h"  // WS2812 3 Color LED driver
 
 // DEVCFG0
@@ -60,7 +60,7 @@ int main() {
     INTCONbits.MVEC = 0x1;
     // disable JTAG to get pins back
     DDPCONbits.JTAGEN = 0;
-    
+
     // do your TRIS and LAT commands here
     TRISAbits.TRISA4 = 0; // A4 output: User LED
     TRISBbits.TRISB4 = 1; // B4 input: User button
@@ -69,61 +69,60 @@ int main() {
     // Setup I2C
     i2c_master_setup();
     mcp_init();
-    ssd1306_setup();
-    
-    ws2812b_setup(); // Init 3 color LEDs
-    
+    /*ssd1306_setup();*/
+
+    /*ws2812b_setup(); // Init 3 color LEDs*/
+
     __builtin_enable_interrupts();
-    
+
     unsigned int counter = 0;
     unsigned int clock = 0;
     char message[50];
-    
-    const int N_LEDS = 5;
-    wsColor ws_color[N_LEDS]; // Color object array for 3 color LED
-    float _hue[N_LEDS];
-    float _sat=0.8, _bri=0.4; // Hue, Saturation, brightness
-    
+
+    /*const int N_LEDS = 5;*/
+    /*wsColor ws_color[N_LEDS]; // Color object array for 3 color LED*/
+    /*float _hue[N_LEDS];*/
+    /*float _sat=0.8, _bri=0.4; // Hue, Saturation, brightness*/
+
 //    int i;
 //    _hue[0] = 0;
 //    for (i=1; i<N_LEDS; i++) {
 //        _hue[i] = _hue[i-1] + 50;
 //    }
-    
+
    /*
-    * TODO: 
-    * 
-    * 1. Test the LED on the MCP to check refactored I2C code
+    * TODO:
+    *
     * 2. Write LSM communication functions
-    * 
+    *
     */
-    
+
     while (1) {
 //        _CP0_SET_COUNT(0); // Set timer to zero
-//        
-//        unsigned char b_input = mcp_read_pin_B();
-//        if (b_input & 0x01) {
-//            mcp_clear_pin_A(7);
-//        } else {
-//            mcp_set_pin_A(7);
-//        }
-//        
+//
+        unsigned char b_input = mcp_read_pin_B();
+        if (b_input & 0x01) {
+            mcp_clear_pin_A(7);
+        } else {
+            mcp_set_pin_A(7);
+        }
+//
 //        double fps = (double) 24000000 / clock;
-//        
+//
 //        // Draw message on the SSD1306 OLED
 //        ssd1306_clear();
 //        sprintf(message, "FPS = %f", fps);
 //        ssd1306_drawMessage(0, 0, message);
-//        
+//
 //        sprintf(message, "Counter = %d", counter);
 //        ssd1306_drawMessage(0, 10, message);
-//        
+//
 //        sprintf(message, "R = %3d, G = %3d, B = %3d", ws_color[0].r, ws_color[0].g, ws_color[0].b);
 //        ssd1306_drawMessage(0, 20, message);
-//        
+//
 //        ssd1306_update();
 //        counter++;
-//        
+//
 //        // Set LED Color
 //        for (i=0; i<N_LEDS; i++) {
 //            _hue[i] += 1;
@@ -135,9 +134,9 @@ int main() {
 //        ws2812b_setColor(ws_color, N_LEDS);
 //
 //        clock = _CP0_GET_COUNT();
-//        
+//
         // Flip UserLED for heart beat
-        LATAbits.LATA4 = !LATAbits.LATA4; 
+        LATAbits.LATA4 = !LATAbits.LATA4;
         sleep_ms(200);
     }
 }

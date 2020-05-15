@@ -1,25 +1,11 @@
 #include "mcp23017.h"
 
 void mcp_write(unsigned char reg_addr, unsigned char data) {
-//    i2c_master_start();         // Send start bit
-//    i2c_master_send(MCP_WRITE_ADDR);// Send I2C address with write bit
-//    i2c_master_send(reg_addr);  // Send register to write to
-//    i2c_master_send(data);      // Send data to write
-//    i2c_master_stop();          // Send stop bit
-    i2c_write(MCP_WRITE_ADDR, reg_addr, data);
+    i2c_write(MCP_ADDR, reg_addr, data);
 }
 
 unsigned char mcp_read(unsigned char reg_addr) {
-//    i2c_master_start();         // Send start bit
-//    i2c_master_send(MCP_WRITE_ADDR);// Send I2C address with write bit
-//    i2c_master_send(reg_addr);  // Send register to read from
-//    i2c_master_restart();       // Send restart bit
-//    i2c_master_send(MCP_READ_ADDR); // Send I2C address with read bit
-//    unsigned char ret = i2c_master_recv();      
-//    i2c_master_ack(1);
-//    i2c_master_stop();
-//    return ret;
-    return i2c_read(MCP_READ_ADDR, reg_addr);
+    return i2c_read(MCP_ADDR, reg_addr);
 }
 
 void mcp_init() {

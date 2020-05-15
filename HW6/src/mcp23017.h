@@ -1,12 +1,9 @@
 #ifndef MCP23017_H__
 #define MCP23017_H__
-/*
-Header file for the MCP23017 IO expander
- */
+// Header file for the MCP23017 IO expander
 #include "i2c.h"
 
-#define MCP_WRITE_ADDR 0b01000000
-#define MCP_READ_ADDR 0b01000001
+#define MCP_ADDR 0b01000000
 
 #define MCP_IODIRA 0x00
 #define MCP_IODIRB 0x01
