@@ -42,12 +42,18 @@
 #pragma config PMDL1WAY = OFF // allow multiple reconfigurations
 #pragma config IOL1WAY = OFF // allow multiple reconfigurations
 
+// A constant that converts time in milliseconds to 
+// the number of clock ticks
+const uint32_t SLEEP_CONVERSION = CLOCK_RATE / 2000;
 
+/*
+ * Sleep for ms milliseconds
+ * Does not reset CP0 clock and assumes the clock is reset in the 
+ * main loop to avoid overflow.
+ */
 void sleep_ms(double ms) {
-    // use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
-    // remember the core timer runs at half the sysclk
-    _CP0_SET_COUNT(0);
-    while (_CP0_GET_COUNT() < CLOCK_RATE / 2000 * ms) {;}
+    uint32_t target_t = _CP0_GET_COUNT() + SLEEP_CONVERSION * ms;
+    while (_CP0_GET_COUNT() < target_t) {;}
 }
 
 int main() {
@@ -77,14 +83,15 @@ int main() {
 
     __builtin_enable_interrupts();
 
-    int32_t counter = 0;
-    int32_t clock = 0;
+    uint32_t counter = 0;
+    uint32_t clock = 0;
     char message[50];
 
     lsm_data sensor_data;
 
     while (1) {
         _CP0_SET_COUNT(0); // Set timer to zero
+        sleep_ms(40); // Sleep for 40 ms, 25 frames per second
 
         /*uint8_t b_input = mcp_read_pin_B();*/
         /*if (b_input & 0x01) {*/

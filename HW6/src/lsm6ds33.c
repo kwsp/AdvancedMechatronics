@@ -12,6 +12,10 @@ uint8_t lsm_read(uint8_t reg_addr) {
 }
 
 void lsm_init() {
+    uint8_t whoami;
+    while (whoami != LSM_WHO_AM_I_VALUE) {
+        whoami = lsm_who_am_i();
+    }
     /* 
      * 
      * To turn on the accelerometer
@@ -44,16 +48,17 @@ uint8_t lsm_who_am_i() {
 /*
  */
 void lsm_read_sensors(lsm_data *data) {
-    int i;
+    int i;    
     // Read i2c 14 times to get the 14 uint8_t
     i2c_read_multiple(LSM_ADDR, LSM_OUT_TEMP_L, BUFFER, 14);
+    
     // Reconstruct into 7 int16_t
     // TODO: these readings don't work
-    data->temp = (BUFFER[0] << 8) | BUFFER[1];
-    data->gyro_x = (BUFFER[2] << 8) | BUFFER[3];
-    data->gyro_y = (BUFFER[4] << 8) | BUFFER[5];
-    data->gyro_z = (BUFFER[6] << 8) | BUFFER[7];
-    data->acc_x = (BUFFER[8] << 8) | BUFFER[9];
-    data->acc_y = (BUFFER[10] << 8) | BUFFER[11];
-    data->acc_z = (BUFFER[12] << 8) | BUFFER[13];
+    data->temp = ( BUFFER[1] << 8) | BUFFER[0];
+    data->gyro_x = ( BUFFER[3] << 8) | BUFFER[2];
+    data->gyro_y = ( BUFFER[5] << 8) | BUFFER[4];
+    data->gyro_z = (BUFFER[7] << 8) | BUFFER[6];
+    data->acc_x = (BUFFER[9] << 8) | BUFFER[8];
+    data->acc_y = (BUFFER[11] << 8) | BUFFER[10];
+    data->acc_z = (BUFFER[13] << 8) | BUFFER[12];
 }

@@ -99,9 +99,11 @@ void i2c_read_multiple(unsigned char address_, unsigned char register_, unsigned
     i2c_master_send(register_);     // Send register to read from
     i2c_master_restart();          // Send restart bit
     i2c_master_send(address_ | 0b1);// Send I2C address with read bit
-    for (i=0; i<length; i++) {
+    for (i=0; i<length-1; i++) {
         data[i] = i2c_master_recv();
+        i2c_master_ack(0);
     }
+    data[i] = i2c_master_recv();
     i2c_master_ack(1);
     i2c_master_stop();
 }
