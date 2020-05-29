@@ -89,9 +89,12 @@ int main() {
 
     lsm_data sensor_data;
 
+    // Acceleration map 
+    int16_t x_len, y_len;
+
     while (1) {
         _CP0_SET_COUNT(0); // Set timer to zero
-        sleep_ms(40); // Sleep for 40 ms, 25 frames per second
+        /*sleep_ms(40); // Sleep for 40 ms, 25 frames per second*/
 
         /*uint8_t b_input = mcp_read_pin_B();*/
         /*if (b_input & 0x01) {*/
@@ -104,16 +107,18 @@ int main() {
 
         // Draw message on the SSD1306 OLED
         ssd1306_clear();
-        sprintf(message, "FPS = %f", fps);
-        ssd1306_drawMessage(0, 0, message);
+        /*sprintf(message, "FPS = %f", fps);*/
+        /*ssd1306_drawMessage(0, 0, message);*/
 
         lsm_read_sensors(&sensor_data); // Read IMU
+        
+        // Calculate acceleration bar length in Cartesian coordinates
+        y_len = 0.002 * sensor_data.data.acc_x;
+        x_len = - 0.002 * sensor_data.data.acc_y;
 
-        sprintf(message, "T=%d, gx=%d", sensor_data.temp, sensor_data.gyro_x);
-        ssd1306_drawMessage(0, 10, message);
-
-        sprintf(message, "ax=%d, ay=%d, az=%d", sensor_data.acc_x, sensor_data.acc_y, sensor_data.acc_z);
-        ssd1306_drawMessage(0, 20, message);
+        /*sprintf(message, "x=%d, y=%d", x_len, y_len);*/
+        /*ssd1306_drawMessage(0, 20, message);*/
+        ssd1306_drawAccMap(x_len, y_len);
 
         ssd1306_update();
         counter++;

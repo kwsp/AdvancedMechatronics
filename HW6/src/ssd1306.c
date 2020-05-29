@@ -1,7 +1,9 @@
 // based on adafruit and sparkfun libraries
 
 #include <string.h> // for memset
+#include <stdio.h>
 #include <xc.h> // for the core timer delay
+
 #include "ssd1306.h"
 #include "font.h"
 
@@ -106,5 +108,37 @@ void ssd1306_drawMessage(unsigned char x, unsigned char y, char* msg) {
     unsigned short i, j;
     for (i=0; i<strlen(msg); i++) {
         ssd1306_drawChar(x + i*CHAR_SPACING, y, msg[i]);
+    }
+}
+
+void ssd1306_drawAccMap(short x, short y) {
+    short i, j;
+    short x_low, x_high, y_low, y_high;
+    // Calculate x and y bar range
+    x += SSD1306_MID_X;
+    y += SSD1306_MID_Y;
+    if (x >= SSD1306_MID_X) {
+        x_low = SSD1306_MID_X;
+        x_high = x;
+    } else {
+        x_low = x;
+        x_high = SSD1306_MID_X;
+    }
+    if (y >= SSD1306_MID_Y) {
+        y_low = SSD1306_MID_Y;
+        y_high = y;
+    } else {
+        y_low = y;
+        y_high = SSD1306_MID_Y;
+    }
+
+    // Draw x bar
+    for (i=x_low; i<=x_high; ++i) {
+        ssd1306_drawPixel(i, SSD1306_MID_Y, 1);
+    }
+
+    // Draw y bar
+    for (i=y_low; i<=y_high; ++i) {
+        ssd1306_drawPixel(SSD1306_MID_X, i, 1);
     }
 }

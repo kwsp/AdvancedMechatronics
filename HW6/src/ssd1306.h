@@ -25,13 +25,27 @@
 #define SSD1306_SETSTARTLINE        0x40 
 #define SSD1306_DEACTIVATE_SCROLL   0x2E ///< Stop scroll
 
+// SSD1306 OLED screen is 128x32
+#define SSD1306_MAX_X               128
+#define SSD1306_MAX_Y               32
+
+#define SSD1306_MID_X               64
+#define SSD1306_MID_Y               16
+
+/*
+ * Low-level functions
+ */
 void ssd1306_setup(void);
 void ssd1306_update(void);
 void ssd1306_clear(void);
 void ssd1306_drawPixel(unsigned char x, unsigned char y, unsigned char color);
 
+/*
+ * High-level functions
+ */
 void ssd1306_drawChar(unsigned char x, unsigned char y, unsigned char c);
 void ssd1306_drawMessage(unsigned char x, unsigned char y, char* msg);
+void ssd1306_drawAccMap(short x, short y);
 
 /// this should be private
 void ssd1306_command(unsigned char c);

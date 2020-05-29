@@ -48,17 +48,15 @@ uint8_t lsm_who_am_i() {
 /*
  */
 void lsm_read_sensors(lsm_data *data) {
-    int i;    
     // Read i2c 14 times to get the 14 uint8_t
-    i2c_read_multiple(LSM_ADDR, LSM_OUT_TEMP_L, BUFFER, 14);
+    i2c_read_multiple(LSM_ADDR, LSM_OUT_TEMP_L, data->buffer, 14);
     
     // Reconstruct into 7 int16_t
-    // TODO: these readings don't work
-    data->temp = ( BUFFER[1] << 8) | BUFFER[0];
-    data->gyro_x = ( BUFFER[3] << 8) | BUFFER[2];
-    data->gyro_y = ( BUFFER[5] << 8) | BUFFER[4];
-    data->gyro_z = (BUFFER[7] << 8) | BUFFER[6];
-    data->acc_x = (BUFFER[9] << 8) | BUFFER[8];
-    data->acc_y = (BUFFER[11] << 8) | BUFFER[10];
-    data->acc_z = (BUFFER[13] << 8) | BUFFER[12];
+    /*data->temp = BUFFER[1] << 8 | BUFFER[0];*/
+    /*data->gyro_x = BUFFER[3] << 8 | BUFFER[2];*/
+    /*data->gyro_y = BUFFER[5] << 8 | BUFFER[4];*/
+    /*data->gyro_z = BUFFER[7] << 8 | BUFFER[6];*/
+    /*data->acc_x = BUFFER[9] << 8 | BUFFER[8];*/
+    /*data->acc_y = BUFFER[11] << 8 | BUFFER[10];*/
+    /*data->acc_z = BUFFER[13] << 8 | BUFFER[12];*/
 }

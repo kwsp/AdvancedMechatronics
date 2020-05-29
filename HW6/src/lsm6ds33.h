@@ -27,13 +27,24 @@ typedef struct {
     int16_t acc_x;
     int16_t acc_y;
     int16_t acc_z;
+} _lsm_data;
+
+typedef union {
+    _lsm_data data;
+    uint8_t buffer[14];
 } lsm_data;
 
+/*
+ * Low-level functions
+ */
 void lsm_init();      // Configure PIC pins to communicate with LSM
 void lsm_write(uint8_t reg_addr, uint8_t data);
 uint8_t lsm_read(uint8_t reg_addr);
 uint8_t lsm_who_am_i();  // Read the who_am_i register from LSM
 
+/*
+ * Mid-level functions
+ */
 void lsm_read_sensors(lsm_data *sensor_data);
 
 #endif
