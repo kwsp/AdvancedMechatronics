@@ -10,6 +10,8 @@
 #include "ws2812b.h"  // WS2812 3 Color LED driver
 #include "i2c.h" // I2C functionality builtin
 
+#include "cap_touch.h" // Capacitive touch
+
 // DEVCFG0
 #pragma config DEBUG = OFF // disable debugging
 #pragma config JTAGEN = OFF // disable jtag
@@ -86,6 +88,9 @@ int main() {
     adc_setup();
     ctmu_setup();
 
+    // Setup Cap sensing
+    cap_calibrate();
+
     __builtin_enable_interrupts();
 
     uint32_t counter = 0;
@@ -97,12 +102,6 @@ int main() {
     // Acceleration map 
     int16_t x_len, y_len;
 
-    // CTMU result
-    int CTMU_N_READS = 10;
-    int CTMU_DELAY = 100;
-    int i;
-    int capacitance_1;
-    int capacitance_2;
 
     // LED Variables
     const int N_LEDS = 5;
@@ -145,22 +144,13 @@ int main() {
         /*
          * Read CTMU ADC for touch sensing
          */
-        /*capacitance_1 = 0;*/
-        /*for (i=0; i<CTMU_N_READS; ++i) {*/
-            /*capacitance_1 += ctmu_read(5, CTMU_DELAY);*/
-        /*}*/
-        /*capacitance_1 /= CTMU_N_READS;*/
+        int pos = cap_get_pos();
 
-        /*capacitance_2 = 0;*/
-        /*for (i=0; i<CTMU_N_READS; ++i) {*/
-            /*capacitance_2 += ctmu_read(4, CTMU_DELAY);*/
-        /*}*/
-        /*capacitance_2 /= CTMU_N_READS;*/
+        sprintf(message, "pos: %d", pos);
+        ssd1306_drawMessage(0, 10, message);
 
-        /*sprintf(message, "cap1: %d", capacitance_1);*/
-        /*ssd1306_drawMessage(0, 10, message);*/
-        /*sprintf(message, "cap2: %d", capacitance_2);*/
-        /*ssd1306_drawMessage(0, 20, message);*/
+        ssd1306_drawAccMap(0, pos/20);
+        ssd1306_drawChar()
 
         /*
          * Toggle LEDs
