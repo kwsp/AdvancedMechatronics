@@ -106,13 +106,17 @@ int main() {
     // LED Variables
     const int N_LEDS = 5;
     wsColor ws_color[N_LEDS]; // Color object array for 3 color LED
-    /*float _hue[N_LEDS];*/
-    /*float _sat=0.8, _bri=0.4; // Hue, Saturation, brightness*/
+    float _hue[N_LEDS];
+    float _sat=0.8; // Hue, Saturation, brightness
+    float _bri[5] = {0, 0, 0, 0, 0 };
+    unsigned int _bri_thresh[5] = { 900, 800, 400, 150, 5 };
+    int i;
     
-    /*_hue[0] = 0;*/
-    /*for (i=1; i<N_LEDS; i++) {*/
-        /*_hue[i] = _hue[i-1] + 50;*/
-    /*}*/
+    // init hue and brightness
+    _hue[0] = 0;
+    for (i=1; i<N_LEDS; i++) {
+        _hue[i] = _hue[i-1] + 50;
+    }
 
     while (1) {
         _CP0_SET_COUNT(0); // Set timer to zero
@@ -150,21 +154,24 @@ int main() {
         ssd1306_drawMessage(0, 10, message);
 
         ssd1306_drawAccMap(0, pos/20);
-        ssd1306_drawChar()
+        //ssd1306_drawChar()
 
         /*
          * Toggle LEDs
          */
-        /*for (i=0; i<N_LEDS; i++) {*/
-            /*_hue[i] += 1;*/
-            /*if (_hue[i] > 255) {*/
-                /*_hue[i] = 0.0;*/
-            /*}*/
-            /*ws_color[i] = HSBtoRGB(_hue[i], _sat, _bri);*/
-        /*}*/
-        ws_color[0].r = 100;
-        ws_color[0].g = 100;
-        ws_color[0].b = 100;
+        for (i=0; i<N_LEDS; i++) {
+            
+            // Update hue
+            _hue[i] += 1;
+            
+            // Update brightness
+            _bri[i] = _bri_thresh[i] < pos ? 0.3 : 0;
+            
+            if (_hue[i] > 255) {
+                _hue[i] = 0.0;
+            }
+            ws_color[i] = HSBtoRGB(_hue[i], _sat, _bri[i]);
+        }
         ws2812b_setColor(ws_color, N_LEDS);
 
         /*
